@@ -31,10 +31,10 @@ class User {
 
 
   // Method to add a new user
-  async addUser(email, password) {
+  async addUser(name , email, password) {
     try {
-      const sql = 'INSERT INTO users (email, password) VALUES (?, ?)';
-      const [result] = await this.db.promise().query(sql, [email, password]);
+      const sql = 'INSERT INTO users (name , email, password) VALUES (?,? ,?)';
+      const [result] = await this.db.promise().query(sql, [name, email, password]);
       return result.insertId;
     } catch (error) {
       console.error('Error adding user:', error);
@@ -43,10 +43,10 @@ class User {
   }
 
   // Method to update a user
-  async updateUser(id, email, password) {
+  async updateUser(id, name , email, password) {
     try {
-      const sql = 'UPDATE users SET email = ?, password = ? WHERE id = ?';
-      await this.db.promise().query(sql, [email, password,  id]);
+      const sql = 'UPDATE users SET name = COALESCE(?, name), email = COALESCE(?, email), password = COALESCE(?, password) WHERE id = ?';
+      await this.db.promise().query(sql, [name , email, password,  id]);
     } catch (error) {
       console.error('Error updating user:', error);
       throw error;
