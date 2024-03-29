@@ -32,6 +32,18 @@ class User {
     }
   }
 
+  // Method to get user's current books
+  async getBookByUserID(id){
+    try{
+      const sql = 'SELECT * FROM user_books WHERE user_id =?';
+      const [books] = await this.db.promise().query(sql, id);
+      return books;
+    }catch(error){
+      console.error( error);
+      throw error;
+    }
+  }
+
   // Method to get user by email
   async getUserByEmail(email){
     try {
@@ -42,7 +54,8 @@ class User {
       console.error('Error fetching user:', error);
       throw error;
     }
-}
+  }
+
 
 
   // Method to add a new user

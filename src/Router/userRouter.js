@@ -31,6 +31,19 @@ router.get('/api/v1/users/:id', async (req, res) => {
     }
 });
 
+//List current User's borrowed books
+router.get('/api/v1/mybooks', auth , async (req, res) => {
+    try {
+        const userid =  req.user;
+        const books = await userModel.getBookByUserID(userid);
+
+        res.status(200).send(books);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send();
+    }
+});
+
 
 // Add a User
 router.post('/api/v1/users/', async (req, res) => {
