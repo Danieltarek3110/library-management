@@ -94,9 +94,13 @@ router.delete('/api/v1/books/:id', async (req, res) => {
 // borrow a book
 router.post('/api/v1/books/borrow', auth ,async (req, res) => {
     const bookid = req.body.book_id;
+    let due_date = req.body.due_date;
+    const parts = due_date.split("-");
+    const isoDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+    due_date = new Date(isoDate);
     const userid = req.user;
     try{
-        await bookModel.borrowBook(userid, bookid );
+        await bookModel.borrowBook(userid, bookid , due_date);
         res.json({ message: 'borrowed successfully' });
     }catch(error){
         console.log('Error borrowing book: ', error);
@@ -105,7 +109,7 @@ router.post('/api/v1/books/borrow', auth ,async (req, res) => {
 });
 
 // return a book
-router.post('/api/v1/books/borrow', auth ,async (req, res) => {
+router.post('/api/v1/books/return', auth ,async (req, res) => {
     const bookid = req.body.book_id;
     const userid = req.user;
     try{

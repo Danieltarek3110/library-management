@@ -2,11 +2,9 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../../middleware/authentication')
 const db = require('../database/dbconn'); 
-const User = require('../Model/user'); 
-const Book = require('../Model/book')
+const User = require('../Model/user');
 
 const userModel = new User(db);
-const bookModel = new Book(db);
 
 // Get all users
 router.get('/api/v1/users/', async (req, res) => {
