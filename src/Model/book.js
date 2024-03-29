@@ -15,6 +15,33 @@ class Book {
     }
   }
 
+// Method to list all BORROWED Books
+async listBorrowedBooks() {
+  try {
+      const sql = `
+          SELECT
+              users.id AS user_id,
+              users.name AS user_name,
+              books.id AS book_id,
+              books.title AS book_title,
+              books.author AS book_author,
+              books.isbn AS book_isbn,
+              user_books.due_date AS due_date
+          FROM
+              user_books
+          JOIN
+              users ON user_books.user_id = users.id
+          JOIN
+              books ON user_books.book_id = books.id;
+      `;
+      const [rows] = await this.db.promise().query(sql);
+      return rows;
+  } catch(error) {
+      console.error(error);
+      throw error;
+  }
+}
+
   // Method to get book by ID
   async getBookByID(id){
     try{
@@ -154,7 +181,37 @@ class Book {
       console.error(error);
       throw error;
     }
-  }  
+  }
+  
+  // Method to list books that have passed their due date
+async listOverdueBooks() {
+  try {
+      const sql = `
+          SELECT
+              users.id AS user_id,
+              users.name AS user_name,
+              books.id AS book_id,
+              books.title AS book_title,
+              books.author AS book_author,
+              books.isbn AS book_isbn,
+              user_books.due_date AS due_date
+          FROM
+              user_books
+          JOIN
+              users ON user_books.user_id = users.id
+          JOIN
+              books ON user_books.book_id = books.id
+          WHERE
+              user_books.due_date < CURRENT_DATE;
+      `;
+      const [rows] = await this.db.promise().query(sql);
+      return rows;
+  } catch(error) {
+      console.error(error);
+      throw error;
+  }
+}
+
 
 } 
  

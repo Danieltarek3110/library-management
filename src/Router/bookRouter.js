@@ -32,18 +32,6 @@ router.get('/api/v1/books/:id', async (req, res) => {
 });
 
 
-// Add a book
-router.post('/api/v1/books/', async (req, res) =>{
-    const {title, author, isbn , available_quantity, shelf_location } = req.body;
-    try{
-        const bookId = await bookModel.addBook(title, author, isbn , available_quantity, shelf_location );
-        res.status(201).json({ message: 'book added successfully', id: bookId });
-    }catch (error) {
-        console.error('Error adding book:', error);
-        res.status(500).json({ error: 'Failed to add book' });
-    }
-});
-
 // Testing reducing book stock
 router.post('/api/v1/books/stock/:id', async (req, res) => {
     const id = req.params.id;
@@ -61,18 +49,7 @@ router.post('/api/v1/books/stock/:id', async (req, res) => {
     }
 });
 
-// Update a book
-router.patch('/api/v1/books/:id', async (req, res) => {
-    const {title, author, isbn , available_quantity, shelf_location } = req.body;
-    const { id } = req.params;
-    try{
-        await bookModel.updateBook(id, title, author, isbn , available_quantity, shelf_location  );
-        res.json({ message: 'book updated successfully' });
-    }catch (error){
-        console.error('Error updating book:', error);
-        res.status(500).json({ error: 'Failed to update book' });
-    }
-});
+
 
 // Delete a book
 router.delete('/api/v1/books/:id', async (req, res) => {

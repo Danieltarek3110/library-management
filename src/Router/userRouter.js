@@ -3,33 +3,15 @@ const router = express.Router();
 const auth = require('../../middleware/authentication')
 const db = require('../database/dbconn'); 
 const User = require('../Model/user');
+const Book = require('../Model/book')
 
 const userModel = new User(db);
+const bookModel = new Book(db);
 
-// Get all users
-router.get('/api/v1/users/', async (req, res) => {
-    try{
-        const rows =  await userModel.listUsers();
-        res.status(200).send(rows);
-    }catch (error){
-        console.log(error);
-        res.status(500).send(error);
-    }
-});
 
-// Get user by ID
-router.get('/api/v1/users/:id', async (req, res) => {
-    try {
-        const user =  await userModel.getUserByID(req.params.id);
-        if(!user[0]){
-            return res.status(404).send('User id not found');
-        }
-        res.status(200).send(user[0]);
-    } catch (error) {
-        console.log(error);
-        res.status(500).send();
-    }
-});
+
+
+
 
 //List current User's borrowed books
 router.get('/api/v1/mybooks', auth , async (req, res) => {
@@ -45,7 +27,7 @@ router.get('/api/v1/mybooks', auth , async (req, res) => {
 });
 
 
-// Add a User
+// Create a User
 router.post('/api/v1/users/', async (req, res) => {
 const { name, email, password } = req.body;
 try {
@@ -86,8 +68,8 @@ router.post('/api/v1/users/login' , async (req, res) => {
 });
 
 // Delete a user
-router.delete('/api/v1/users/:id', async (req, res) => {
-    const id  = req.params.id;
+router.delete('/api/v1/users', auth ,async (req, res) => {
+    const id  = req.user;
     try{
         const result = await userModel.deleteUser(id);
         if(!result ){

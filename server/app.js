@@ -1,6 +1,8 @@
 const express = require('express');
 const userRouter = require('../src/Router/userRouter')
 const bookRouter = require('../src/Router/bookRouter')
+const adminRouter = require('../src/Router/adminRouter')
+adminRouter
 const mysql = require('mysql2');
 require('dotenv').config({ path: './config/dev.env' });
 
@@ -28,6 +30,7 @@ db.connect((err) => {
 
 app.use(userRouter);
 app.use(bookRouter);
+app.use(adminRouter);
 
 
 app.listen(PORT, () => {
