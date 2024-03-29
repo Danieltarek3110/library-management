@@ -7,7 +7,6 @@ require('dotenv').config({ path: './config/dev.env' });
 const app = express();
 const PORT = process.env.PORT;
 
-// Middleware
 app.use(express.json());
 
 // Database connection
@@ -30,7 +29,7 @@ db.connect((err) => {
 app.use(userRouter);
 app.use(bookRouter);
 
-// Start server
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
