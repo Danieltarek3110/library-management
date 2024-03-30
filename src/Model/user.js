@@ -25,6 +25,9 @@ class User {
     try{
       const sql = 'SELECT * FROM users WHERE id =?';
       const user = await this.db.promise().query(sql, [id]);
+      if (!user[0] || user.length === 0) {
+        throw new Error('User not found');
+      }
       return user[0];
     }catch(error){
       console.error('Error fetching user:', error);

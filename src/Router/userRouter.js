@@ -3,15 +3,7 @@ const router = express.Router();
 const auth = require('../../middleware/authentication')
 const db = require('../database/dbconn'); 
 const User = require('../Model/user');
-const Book = require('../Model/book')
-
 const userModel = new User(db);
-const bookModel = new Book(db);
-
-
-
-
-
 
 //List current User's borrowed books
 /**

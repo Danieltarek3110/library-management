@@ -14,11 +14,13 @@ const bookModel = new Book(db);
  * /api/v1/admin/books:
  *   post:
  *     summary: Add a book
- *     description: Endpoint to add a book by an admin.
+ *     description: Endpoint to add a new book.
  *     tags:
  *       - Admin
+ *     security:
+ *       - BearerAuth: []
  *     requestBody:
- *       description: Book information to be added.
+ *       description: Information about the book to be added.
  *       required: true
  *       content:
  *         application/json:
@@ -42,7 +44,7 @@ const bookModel = new Book(db);
  *           application/json:
  *             example:
  *               message: book added successfully
- *               id: bookId
+ *               id: <bookId>
  *       500:
  *         description: Internal Server Error. Indicates a failure in adding the book.
  *         content:
@@ -50,7 +52,7 @@ const bookModel = new Book(db);
  *             example:
  *               error: Failed to add book
  */
-router.post('/api/v1/admin/books', async (req, res) =>{
+router.post('/api/v1/admin/books', auth ,async (req, res) =>{
     const {title, author, isbn , available_quantity, shelf_location } = req.body;
     try{
         const bookId = await bookModel.addBook(title, author, isbn , available_quantity, shelf_location );
@@ -70,6 +72,8 @@ router.post('/api/v1/admin/books', async (req, res) =>{
  *     description: Endpoint to update a book by its ID.
  *     tags:
  *       - Admin
+ *     security:
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -78,7 +82,7 @@ router.post('/api/v1/admin/books', async (req, res) =>{
  *         schema:
  *           type: string
  *     requestBody:
- *       description: Book information to be updated.
+ *       description: Information about the book fields to be updated.
  *       required: true
  *       content:
  *         application/json:
@@ -109,7 +113,7 @@ router.post('/api/v1/admin/books', async (req, res) =>{
  *             example:
  *               error: Failed to update book
  */
-router.patch('/api/v1/admin/books/:id', async (req, res) => {
+router.patch('/api/v1/admin/books/:id', auth ,async (req, res) => {
     const {title, author, isbn , available_quantity, shelf_location } = req.body;
     const { id } = req.params;
     try{
@@ -130,9 +134,11 @@ router.patch('/api/v1/admin/books/:id', async (req, res) => {
  *     description: Endpoint to retrieve all users.
  *     tags:
  *       - Admin
+ *     security:
+ *       - BearerAuth: []
  *     responses:
  *       200:
- *         description: Successfully retrieved users.
+ *         description: Successfully retrieved all users.
  *         content:
  *           application/json:
  *             schema:
@@ -140,13 +146,13 @@ router.patch('/api/v1/admin/books/:id', async (req, res) => {
  *               items:
  *                 $ref: '#/components/schemas/User'
  *       500:
- *         description: Internal Server Error. Indicates a failure in retrieving users.
+ *         description: Internal Server Error. Indicates a failure in retrieving all users.
  *         content:
  *           application/json:
  *             example:
  *               error: Failed to retrieve users
  */
-router.get('/api/v1/admin/users', async (req, res) => {
+router.get('/api/v1/admin/users', auth ,async (req, res) => {
     try{
         const rows =  await userModel.listUsers();
         res.status(200).send(rows);
@@ -165,9 +171,11 @@ router.get('/api/v1/admin/users', async (req, res) => {
  *     description: Endpoint to retrieve all borrowed books.
  *     tags:
  *       - Admin
+ *     security:
+ *       - BearerAuth: []
  *     responses:
  *       200:
- *         description: Successfully retrieved borrowed books.
+ *         description: Successfully retrieved all borrowed books.
  *         content:
  *           application/json:
  *             schema:
@@ -175,13 +183,13 @@ router.get('/api/v1/admin/users', async (req, res) => {
  *               items:
  *                 $ref: '#/components/schemas/Book'
  *       500:
- *         description: Internal Server Error. Indicates a failure in retrieving borrowed books.
+ *         description: Internal Server Error. Indicates a failure in retrieving all borrowed books.
  *         content:
  *           application/json:
  *             example:
  *               error: Failed to retrieve borrowed books
  */
-router.get('/api/v1/admin/borrowedbooks', async (req, res) => {
+router.get('/api/v1/admin/borrowedbooks', auth ,async (req, res) => {
     try{
         const rows =  await bookModel.listBorrowedBooks();
         res.status(200).send(rows);
@@ -234,43 +242,49 @@ router.get('/api/v1/admin/overdue', auth ,async (req, res) => {
  * @swagger
  * /api/v1/admin/users/{id}:
  *   get:
- *     summary: Get user by ID
+ *     summary: Get a user by ID
  *     description: Endpoint to retrieve a user by ID.
  *     tags:
  *       - Admin
+ *     security:
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
- *         description: ID of the user to be retrieved.
+ *         description: ID of the user to retrieve.
  *         required: true
  *         schema:
  *           type: string
  *     responses:
  *       200:
- *         description: Successfully retrieved user by ID.
+ *         description: Successfully retrieved the user.
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
  *       404:
- *         description: Not Found. Indicates that the user with the given ID does not exist.
+ *         description: User ID not found.
  *         content:
  *           application/json:
  *             example:
  *               message: User id not found
  *       500:
  *         description: Internal Server Error. Indicates a failure in retrieving the user.
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: Failed to retrieve user
  */
-router.get('/api/v1/admin/users/:id', async (req, res) => {
+router.get('/api/v1/admin/users/:id', auth ,async (req, res) => {
     try {
         const user =  await userModel.getUserByID(req.params.id);
         if(!user[0]){
-            return res.status(404).send('User id not found');
+            return res.status(404).json({ "error": "User id not found" });
+        }else{
+            res.status(200).send(user[0]);
         }
-        res.status(200).send(user[0]);
     } catch (error) {
-        console.log(error);
-        res.status(500).send();
+        res.status(500).json({ "error": "Failed to retrieve user" });;
     }
 });
 
