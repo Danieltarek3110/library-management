@@ -2,13 +2,18 @@ const express = require('express');
 const userRouter = require('../src/Router/userRouter')
 const bookRouter = require('../src/Router/bookRouter')
 const adminRouter = require('../src/Router/adminRouter')
-adminRouter
+const swaggerUI = require('swagger-ui-express');
+const swaggerSpec = require('../src/Swagger/swagger');
+const cors = require('cors');
 const mysql = require('mysql2');
 require('dotenv').config({ path: './config/dev.env' });
 
 const app = express();
 const PORT = process.env.PORT;
 
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
+
+app.use(cors());
 app.use(express.json());
 
 // Database connection
