@@ -192,6 +192,7 @@ router.get('/api/v1/admin/users', auth ,async (req, res) => {
 router.get('/api/v1/admin/borrowedbooks', auth ,async (req, res) => {
     try{
         const rows =  await bookModel.listBorrowedBooks();
+        console.log(rows);
         res.status(200).send(rows);
     }catch (error){
         console.log(error);

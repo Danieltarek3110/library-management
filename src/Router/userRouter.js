@@ -198,6 +198,7 @@ router.post('/api/v1/users/login' , async (req, res) => {
         if(!token){
             return res.status(400).send('Incorrect username or password');
         }
+        console.log({ message: 'Login successfully' , token: token });
         res.json({ message: 'Login successfully' , token: token });
     } catch(error){
         console.error('Error Authenticating: ', error);

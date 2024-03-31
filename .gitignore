@@ -23,3 +23,5 @@ node_modules/
 # Ignore OS-specific files
 .DS_Store
 Thumbs.db
+config/dev.env
+config/dev.env

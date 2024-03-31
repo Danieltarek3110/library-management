@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  library-management-server:
+    build: .
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: host.docker.internal  # Use this for accessing localhost from Docker container
+      DB_PORT: 3306
+      DB_USERNAME: root
+      DB_PASSWORD: 
+      DB_NAME: Bosta
