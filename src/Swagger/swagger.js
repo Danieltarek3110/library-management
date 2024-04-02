@@ -1,18 +1,18 @@
-const swaggerJSDoc = require('swagger-jsdoc');
+const swaggerJSDoc = require("swagger-jsdoc");
 
 const swaggerDefinition = {
-  openapi: '3.0.0',
+  openapi: "3.0.0",
   info: {
-    title: 'Library Management System APIs',
-    version: '1.0.0',
-    description: 'My API Description',
+    title: "Library Management System APIs",
+    version: "1.0.0",
+    description: "My API Description",
   },
   components: {
     securitySchemes: {
       BearerAuth: {
-        type: 'apiKey',
-        name: 'Authorization',
-        in: 'header',
+        type: "apiKey",
+        name: "Authorization",
+        in: "header",
       },
     },
   },
@@ -25,7 +25,11 @@ const swaggerDefinition = {
 
 const options = {
   swaggerDefinition,
-  apis: ['./src/Router/bookRouter.js', './src/Router/userRouter.js' , './src/Router/adminRouter.js'],
+  apis: [
+    "./src/Router/bookRouter.js",
+    "./src/Router/userRouter.js",
+    "./src/Router/adminRouter.js",
+  ],
 };
 
 const swaggerSpec = swaggerJSDoc(options);

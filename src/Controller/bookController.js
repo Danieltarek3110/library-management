@@ -46,29 +46,35 @@ const reduceStock = async (req, res) => {
 };
 
 const borrowBook = async (req, res) => {
-    const bookid = req.body.book_id;
-    let due_date = req.body.due_date;
-    const parts = due_date.split("-");
-    const isoDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
-    due_date = new Date(isoDate);
-    const userid = req.user;
-    try {
-        await bookModel.borrowBook(userid, bookid, due_date);
-        res.json({ message: 'borrowed successfully' });
-    } catch (error) {
-        res.status(500).send({ Error: error.message });
-    }
-}
+  const bookid = req.body.book_id;
+  let due_date = req.body.due_date;
+  const parts = due_date.split("-");
+  const isoDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+  due_date = new Date(isoDate);
+  const userid = req.user;
+  try {
+    await bookModel.borrowBook(userid, bookid, due_date);
+    res.json({ message: "borrowed successfully" });
+  } catch (error) {
+    res.status(500).send({ Error: error.message });
+  }
+};
 
 const returnBook = async (req, res) => {
-    const bookid = req.body.book_id;
-    const userid = req.user;
-    try {
-        await bookModel.returnBook(userid, bookid);
-        res.json({ message: 'returned successfully' });
-    } catch (error) {
-        res.status(400).send({ Error: error.message });
-    }
-}
+  const bookid = req.body.book_id;
+  const userid = req.user;
+  try {
+    await bookModel.returnBook(userid, bookid);
+    res.json({ message: "returned successfully" });
+  } catch (error) {
+    res.status(400).send({ Error: error.message });
+  }
+};
 
-module.exports = { getAllBooks, getBookByID, reduceStock , borrowBook , returnBook};
+module.exports = {
+  getAllBooks,
+  getBookByID,
+  reduceStock,
+  borrowBook,
+  returnBook,
+};

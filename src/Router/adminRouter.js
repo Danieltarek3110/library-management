@@ -1,12 +1,15 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const auth = require('../../middleware/authentication');
-const db = require('../database/dbconn'); 
-const User = require('../Model/user');
-const Book = require('../Model/book')
-
-const userModel = new User(db);
-const bookModel = new Book(db);
+const auth = require("../../middleware/authentication");
+const {
+  addNewBook,
+  updateBook,
+  getAllUsers,
+  getBorrowedBooks,
+  getOverdueBooks,
+  getUserByID,
+  deleteBook,
+} = require("../Controller/adminController");
 
 // Add a book
 /**
@@ -52,15 +55,7 @@ const bookModel = new Book(db);
  *             example:
  *               error: Failed to add book
  */
-router.post('/api/v1/admin/books', auth ,async (req, res) =>{
-    const {title, author, isbn , available_quantity, shelf_location } = req.body;
-    try{
-        const bookId = await bookModel.addBook(title, author, isbn , available_quantity, shelf_location );
-        res.status(201).json({ message: 'book added successfully', id: bookId });
-    }catch (error) {
-        res.status(500).json({ error: 'Failed to add book' });
-    }
-});
+router.post("/api/v1/admin/books", auth, addNewBook);
 
 // Update a book
 /**
@@ -112,17 +107,7 @@ router.post('/api/v1/admin/books', auth ,async (req, res) =>{
  *             example:
  *               error: Failed to update book
  */
-router.patch('/api/v1/admin/books/:id', auth ,async (req, res) => {
-    const {title, author, isbn , available_quantity, shelf_location } = req.body;
-    const { id } = req.params;
-    try{
-        await bookModel.updateBook(id, title, author, isbn , available_quantity, shelf_location  );
-        res.json({ message: 'book updated successfully' });
-    }catch (error){
-        console.error('Error updating book:', error);
-        res.status(500).json({ error: 'Failed to update book' });
-    }
-});
+router.patch("/api/v1/admin/books/:id", auth, updateBook);
 
 // Get all users
 /**
@@ -151,15 +136,7 @@ router.patch('/api/v1/admin/books/:id', auth ,async (req, res) => {
  *             example:
  *               error: Failed to retrieve users
  */
-router.get('/api/v1/admin/users', auth ,async (req, res) => {
-    try{
-        const rows =  await userModel.listUsers();
-        res.status(200).send(rows);
-    }catch (error){
-        console.log(error);
-        res.status(500).send(error);
-    }
-});
+router.get("/api/v1/admin/users", auth, getAllUsers);
 
 // Get all borrowed books
 /**
@@ -188,16 +165,7 @@ router.get('/api/v1/admin/users', auth ,async (req, res) => {
  *             example:
  *               error: Failed to retrieve borrowed books
  */
-router.get('/api/v1/admin/borrowedbooks', auth ,async (req, res) => {
-    try{
-        const rows =  await bookModel.listBorrowedBooks();
-        console.log(rows);
-        res.status(200).send(rows);
-    }catch (error){
-        console.log(error);
-        res.status(500).send(error);
-    }
-});
+router.get("/api/v1/admin/borrowedbooks", auth, getBorrowedBooks);
 
 // Get all overdue books
 /**
@@ -226,16 +194,7 @@ router.get('/api/v1/admin/borrowedbooks', auth ,async (req, res) => {
  *             example:
  *               error: Failed to retrieve overdue books
  */
-router.get('/api/v1/admin/overdue', auth ,async (req, res) => {
-    try{
-        const rows =  await bookModel.listOverdueBooks();
-        res.status(200).send(rows);
-    }catch (error){
-        console.log(error);
-        res.status(500).send(error);
-    }
-});
-
+router.get("/api/v1/admin/overdue", auth, getOverdueBooks);
 
 // Get user by ID
 /**
@@ -275,18 +234,7 @@ router.get('/api/v1/admin/overdue', auth ,async (req, res) => {
  *             example:
  *               error: Failed to retrieve user
  */
-router.get('/api/v1/admin/users/:id', auth ,async (req, res) => {
-    try {
-        const user =  await userModel.getUserByID(req.params.id);
-        if(!user[0]){
-            return res.status(404).json({ "error": "User id not found" });
-        }else{
-            res.status(200).send(user[0]);
-        }
-    } catch (error) {
-        res.status(500).json({ "error": "Failed to retrieve user" });;
-    }
-});
+router.get("/api/v1/admin/users/:id", auth, getUserByID);
 
 // Delete a book
 /**
@@ -326,21 +274,6 @@ router.get('/api/v1/admin/users/:id', auth ,async (req, res) => {
  *             example:
  *               error: Failed to delete book
  */
-router.delete('/api/v1/books/:id', auth ,async (req, res) => {
-    const id  = req.params.id;
-    try{
-        const result = await bookModel.deleteBook(id);
-        if(!result ){
-            res.status(404).json({ error: 'book not found' });
-        }else{
-            res.json({ message: 'book deleted successfully' });
-        }
-    }catch(error){
-        console.error('Error deleting book:', error);
-        res.status(500).send(error);
-    }
-});
-
-
+router.delete("/api/v1/books/:id", auth, deleteBook);
 
 module.exports = router;

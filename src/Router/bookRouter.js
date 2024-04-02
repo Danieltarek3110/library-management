@@ -1,7 +1,13 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const auth = require('../../middleware/authentication');
-const { getAllBooks, getBookByID, reduceStock, borrowBook, returnBook } = require('../Controller/bookController')
+const auth = require("../../middleware/authentication");
+const {
+  getAllBooks,
+  getBookByID,
+  reduceStock,
+  borrowBook,
+  returnBook,
+} = require("../Controller/bookController");
 
 // Get all books
 /**
@@ -30,7 +36,7 @@ const { getAllBooks, getBookByID, reduceStock, borrowBook, returnBook } = requir
  *             example:
  *               error: Failed to retrieve books
  */
-router.get('/api/v1/books/', auth, getAllBooks);
+router.get("/api/v1/books/", auth, getAllBooks);
 
 // Get book by ID
 /**
@@ -70,11 +76,10 @@ router.get('/api/v1/books/', auth, getAllBooks);
  *             example:
  *               error: Failed to retrieve book
  */
-router.get('/api/v1/books/:id', auth, getBookByID);
-
+router.get("/api/v1/books/:id", auth, getBookByID);
 
 // Testing reducing book stock
-router.post('/api/v1/books/stock/:id', reduceStock);
+router.post("/api/v1/books/stock/:id", reduceStock);
 
 // borrow a book
 /**
@@ -114,7 +119,7 @@ router.post('/api/v1/books/stock/:id', reduceStock);
  *             example:
  *               error: Failed to borrow book
  */
-router.post('/api/v1/books/borrow', auth, borrowBook);
+router.post("/api/v1/books/borrow", auth, borrowBook);
 
 // return a book
 /**
@@ -151,8 +156,6 @@ router.post('/api/v1/books/borrow', auth, borrowBook);
  *             example:
  *               error: Failed to return book
  */
-router.post('/api/v1/books/return', auth, returnBook);
-
-
+router.post("/api/v1/books/return", auth, returnBook);
 
 module.exports = router;
