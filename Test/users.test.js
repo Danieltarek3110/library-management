@@ -8,7 +8,7 @@ describe('GET /api/v1/admin/users/:id', () => {
         const expectedUser = {
             "id": 2,
             "name": "Daniel",
-            "email": "DanielTarek3110@gmail.com",
+            "email": "DanielTarek@gmail.com",
             "password": "$2b$08$DC4EkbZygp.fBosTK3yRrOLzQcKQMzFbQw.KZGlJXsOpO8LSsAXWK"
         };
 

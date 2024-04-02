@@ -1,10 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../../middleware/authentication');
-const db = require('../database/dbconn'); 
-const Book = require('../Model/book'); 
-
-const bookModel = new Book(db);
+const { getAllBooks, getBookByID, reduceStock, borrowBook, returnBook } = require('../Controller/bookController')
 
 // Get all books
 /**
@@ -33,16 +30,7 @@ const bookModel = new Book(db);
  *             example:
  *               error: Failed to retrieve books
  */
-
-router.get('/api/v1/books/', auth ,async (req, res) => {
-    try{
-        const rows =  await bookModel.listBooks();
-        res.status(200).send(rows);
-    }catch (error) {
-        console.log(error);
-        res.status(500).send(error);
-    }
-});
+router.get('/api/v1/books/', auth, getAllBooks);
 
 // Get book by ID
 /**
@@ -82,41 +70,11 @@ router.get('/api/v1/books/', auth ,async (req, res) => {
  *             example:
  *               error: Failed to retrieve book
  */
-router.get('/api/v1/books/:id',auth ,async (req, res) => {
-    try {
-        const book =  await bookModel.getBookByID(req.params.id);
-        if(book[0].length === 0){
-            return res.status(404).send('book id not found');
-        }
-        res.status(200).send(book[0]);
-    } catch (error) {
-        console.log(error);
-        res.status(500).send();
-    }
-});
+router.get('/api/v1/books/:id', auth, getBookByID);
 
 
 // Testing reducing book stock
-router.post('/api/v1/books/stock/:id', async (req, res) => {
-    const id = req.params.id;
-    try{
-        const book =  await bookModel.getBookByID(id);
-        console.log("Book   " + book[0][0] )
-        let quantity = book[0][0].available_quantity;
-        console.log("Quantity   " + quantity)
-        await bookModel.reduceStock(id)
-        //await bookModel.updateBook(id, null, null, null , quantity-1 , null  );
-        res.status(201).json({ message: 'reduced stock successfully', id: id });
-    }catch(error){
-        console.error('Error:   ', error);
-        res.status(500).send( error );
-    }
-});
-
-
-
-
-
+router.post('/api/v1/books/stock/:id', reduceStock);
 
 // borrow a book
 /**
@@ -156,21 +114,7 @@ router.post('/api/v1/books/stock/:id', async (req, res) => {
  *             example:
  *               error: Failed to borrow book
  */
-router.post('/api/v1/books/borrow', auth ,async (req, res) => {
-    const bookid = req.body.book_id;
-    let due_date = req.body.due_date;
-    const parts = due_date.split("-");
-    const isoDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
-    due_date = new Date(isoDate);
-    const userid = req.user;
-    try{
-        await bookModel.borrowBook(userid, bookid , due_date);
-        res.json({ message: 'borrowed successfully' });
-    }catch(error){
-        console.log('Error borrowing book: ', error);
-        res.status(500).send(error);
-    }
-});
+router.post('/api/v1/books/borrow', auth, borrowBook);
 
 // return a book
 /**
@@ -207,17 +151,7 @@ router.post('/api/v1/books/borrow', auth ,async (req, res) => {
  *             example:
  *               error: Failed to return book
  */
-router.post('/api/v1/books/return', auth ,async (req, res) => {
-    const bookid = req.body.book_id;
-    const userid = req.user;
-    try{
-        await bookModel.returnBook(userid, bookid );
-        res.json({ message: 'returned successfully' });
-    }catch(error){
-        console.log('Error returning book: ', error);
-        res.status(500).send(error);
-    }
-});
+router.post('/api/v1/books/return', auth, returnBook);
 
 
 

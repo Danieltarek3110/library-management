@@ -24,7 +24,7 @@ async listBorrowedBooks() {
               users.name AS user_name,
               books.id AS book_id,
               books.title AS book_title,
-              books.author AS book_author,
+              books.author AS book_author,  
               books.isbn AS book_isbn,
               user_books.due_date AS due_date
           FROM
@@ -32,7 +32,8 @@ async listBorrowedBooks() {
           JOIN
               users ON user_books.user_id = users.id
           JOIN
-              books ON user_books.book_id = books.id;
+              books ON user_books.book_id = books.id
+          ORDER BY due_date;
       `;
       const [rows] = await this.db.promise().query(sql);
       return rows;

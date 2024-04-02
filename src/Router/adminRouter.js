@@ -58,7 +58,6 @@ router.post('/api/v1/admin/books', auth ,async (req, res) =>{
         const bookId = await bookModel.addBook(title, author, isbn , available_quantity, shelf_location );
         res.status(201).json({ message: 'book added successfully', id: bookId });
     }catch (error) {
-        console.error('Error adding book:', error);
         res.status(500).json({ error: 'Failed to add book' });
     }
 });
