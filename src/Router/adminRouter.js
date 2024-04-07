@@ -1,6 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const auth = require("../../middleware/authentication");
+const rateLimit = require('express-rate-limit');
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 3, // Maximum 3 requests per IP
+  message: 'Too many requests from this IP, please try again later'
+});
+
 const {
   addNewBook,
   updateBook,
@@ -55,7 +63,7 @@ const {
  *             example:
  *               error: Failed to add book
  */
-router.post("/api/v1/admin/books", auth, addNewBook);
+router.post("/api/v1/admin/books", auth, limiter , addNewBook);
 
 // Update a book
 /**
@@ -107,7 +115,7 @@ router.post("/api/v1/admin/books", auth, addNewBook);
  *             example:
  *               error: Failed to update book
  */
-router.patch("/api/v1/admin/books/:id", auth, updateBook);
+router.patch("/api/v1/admin/books/:id", auth,limiter ,updateBook);
 
 // Get all users
 /**

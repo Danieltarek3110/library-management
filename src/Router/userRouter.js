@@ -1,6 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const auth = require("../../middleware/authentication");
+const rateLimit = require('express-rate-limit');
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 3, // Maximum 3 requests per IP
+  message: 'Too many requests from this IP, please try again later'
+});
+
+
 const {
   getBookByUserID,
   registerAccount,
@@ -73,7 +82,7 @@ router.get("/api/v1/mybooks", auth, getBookByUserID);
  *             example:
  *               error: Failed to add user
  */
-router.post("/api/v1/users/", registerAccount);
+router.post("/api/v1/users/", limiter , registerAccount);
 
 // Update a user
 /**
@@ -165,7 +174,7 @@ router.patch("/api/v1/users/:id", updateUserByID);
  *             example:
  *               error: Failed to login
  */
-router.post("/api/v1/users/login", loginUser);
+router.post("/api/v1/users/login", limiter , loginUser);
 
 // Delete a user
 
