@@ -6,6 +6,9 @@ const userModel = new User(db);
 const bookModel = new Book(db);
 
 const addNewBook = async (req, res) => {
+  if(!req.user.is_admin){
+    return res.status(400).json({ error: "Please sign in with an administrator" });
+  }
   const { title, author, isbn, available_quantity, shelf_location } = req.body;
   try {
     const bookId = await bookModel.addBook(

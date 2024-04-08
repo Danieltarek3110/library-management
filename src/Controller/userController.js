@@ -15,9 +15,9 @@ const getBookByUserID = async (req, res) => {
 };
 
 const registerAccount = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password , isAdmin } = req.body;
   try {
-    const userId = await userModel.addUser(name, email, password);
+    const userId = await userModel.addUser(name, email, password , isAdmin);
     res.status(201).json({ message: "User added successfully", id: userId });
   } catch (error) {
     console.error("Error adding User:", error);

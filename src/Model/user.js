@@ -60,13 +60,20 @@ class User {
   }
 
   // Method to add a new user
-  async addUser(name, email, password) {
+  async addUser(name, email, password , isAdmin) {
     try {
       password = await bcrypt.hash(password, 8);
-      const sql = "INSERT INTO users (name , email, password) VALUES (?,? ,?)";
+      const sql = "INSERT INTO users (name , email, password , is_admin) VALUES ( ? , ? , ? , ? )";
       const [result] = await this.db
-        .promise()
-        .query(sql, [name, email, password]);
+      .promise()
+      .query(sql, [name, email, password , isAdmin]);
+
+      const userId = result.insertId;
+
+      const token = jwt.sign({ _id: userId }, "Daniel");
+      const tokenSql = "INSERT INTO tokens (user_id, token) VALUES (?, ?)";
+      await this.db.promise().query(tokenSql, [userId, token]);
+
       return result.insertId;
     } catch (error) {
       console.error("Error adding user:", error);
@@ -83,6 +90,7 @@ class User {
       }
 
       const userObject = userRow[0];
+      const userId = userRow[0].id;
       const passwordMatch = await bcrypt.compare(password, userObject.password);
       console.log("Password match:", passwordMatch);
 
@@ -91,6 +99,9 @@ class User {
         return null;
       }
       const token = jwt.sign({ _id: userObject.id }, "Daniel");
+
+      const tokenSql = "INSERT INTO tokens (user_id, token) VALUES (?, ?)";
+      await this.db.promise().query(tokenSql, [userId, token]);
 
       return token;
     } catch (error) {
